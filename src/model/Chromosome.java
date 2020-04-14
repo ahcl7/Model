@@ -71,7 +71,7 @@ public class Chromosome {
         this.needTobeUpdated = false;
     }
 
-    public double calculateSatisfaction1(int teacherId) {
+    public double calculateSatisfaction(int teacherId) {
         Vector<Integer> vt = new Vector<>();
         Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
         for (int j = 0; j < slots.size(); j++) {
@@ -208,7 +208,7 @@ public class Chromosome {
 
     }
 
-    public double calculateSatisfaction(int teacherId) {
+    public double calculateSatisfaction1(int teacherId) {
         Vector<Teacher> vt = new Vector<>();
         vt.add(this.model.getTeachers().get(teacherId));
         return -this.calculateFitnessForSubGroup(vt);
@@ -266,7 +266,7 @@ public class Chromosome {
 //                0.3 * (1.0 / (1.0 + F1 * 5));
 
         double fitness = F / teachers.size() * 0.7 +
-                0.3 * (1.0 / (1.0 + std * 5));
+                0.3 * (1.0 / (1.0 + std * 5.0));
 
 //        double fitness = F / teachers.size()
 ////                + 0.3 * (1.0 / (1.0 + std * 5))
@@ -336,6 +336,22 @@ public class Chromosome {
 //        return 0.0;
     }
 
+    public int getNumberOfViolation() {
+        int rs = 0;
+        for(Teacher teacher:this.getModel().getTeachers()) {
+            int teacherId = teacher.getId();
+            int cnt = 0;
+            for(int j = 0; j < 10; j++) {
+                if (this.genes.get(j).get(teacherId) != -1) {
+                    cnt++;
+                }
+            }
+            if (cnt < this.model.getQuota()[teacherId]) rs ++;
+        }
+        return rs;
+    }
+
+
 
     public double calculateFitness() {
 
@@ -348,7 +364,8 @@ public class Chromosome {
             } else partTimeTeachers.add(teacher);
         }
 
-        this.fitness = 0.5 * this.calculateFitnessForSubGroup(fullTimeTeachers) + 0.5 * this.calculateFitnessForSubGroup(partTimeTeachers);
+        this.fitness = 0.5 * this.calculateFitnessForSubGroup1(fullTimeTeachers) + 0.5 * this.calculateFitnessForSubGroup1(partTimeTeachers);
+        this.fitness = 0.5 * (1.0 /(1.0 +  this.getNumberOfViolation())) + 0.5 * this.fitness;
         this.needTobeUpdated = false;
         return fitness;
     }
@@ -532,7 +549,7 @@ public class Chromosome {
         Dinic dinic = new Dinic(superSink + 1, superSource, superSink);
         for (int i = 0; i < this.model.getTeachers().size(); i++) {
             if (this.model.getTeachers().get(i).getType() == Teacher.FULL_TIME) {
-                edges.add(new Graph.Edge(source, i, Model.D, Dinic.INF));
+                edges.add(new Graph.Edge(source, i, this.model.getQuota()[i], Dinic.INF));
             } else {
                 edges.add(new Graph.Edge(source, i, 0, Dinic.INF));
             }
@@ -580,9 +597,7 @@ public class Chromosome {
         }
         int totalDemand = 0;
         for (int i = 0; i < this.model.getTeachers().size(); i++) {
-            if (this.model.getTeachers().get(i).getType() == Teacher.FULL_TIME) {
-                totalDemand += Model.D;
-            }
+            totalDemand += this.model.getQuota()[i];
         }
         dinic.add(superSource1, source, this.model.getClasses().size(), Dinic.INF);
 

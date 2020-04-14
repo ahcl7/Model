@@ -98,7 +98,7 @@ public class Visualize extends ApplicationFrame {
             avgFitnessSeries.add(i, avgFitnesses.get(i));
         }
 
-        final XYSeries sdSeries = new XYSeries( "Standard deviation" );
+        final XYSeries sdSeries = new XYSeries( "Number of violation" );
         for(int i =0 ; i < sd.size(); i++) {
             sdSeries.add(i, sd.get(i));
         }
@@ -110,11 +110,11 @@ public class Visualize extends ApplicationFrame {
         return dataset;
     }
 
-    public void add(double bestFitness, double avgFitness, double standardDeviation) {
-        System.out.println("std " + standardDeviation);
+    public void add(double bestFitness, double avgFitness, int violation) {
+//        System.out.println("std " + standardDeviation);
         this.bestFitnesses.add(bestFitness);
         this.avgFitnesses.add(avgFitness);
-        this.sd.add(standardDeviation);
+        this.sd.add(violation * 1.0);
         updateChart();
     }
 

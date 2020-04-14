@@ -8,9 +8,6 @@ import java.util.Vector;
 
 public class Model {
 
-    public static final int D = 4;
-
-
     public Vector<Teacher> getTeachers() {
         return teachers;
     }
@@ -84,9 +81,18 @@ public class Model {
     private double registeredSubjects[][];
     private int expectedNumberOfClass[];
     private int consecutiveSlotLimit[];
+    private int quota[];
+
+    public int[] getQuota() {
+        return quota;
+    }
+
+    public void setQuota(int[] quota) {
+        this.quota = quota;
+    }
 
     public Model(Vector<Teacher> teachers, Vector<SlotGroup> slots, Vector<Subject> subjects, Vector<Class> classes,
-                  double[][] registeredSlots, double[][] registeredSubjects, int[] expectedNumberOfClass, int[] consecutiveSlotLimit) {
+                 double[][] registeredSlots, double[][] registeredSubjects, int[] expectedNumberOfClass, int[] consecutiveSlotLimit, int[] quota) {
         this.teachers = teachers;
         this.slots = slots;
         this.subjects = subjects;
@@ -95,17 +101,18 @@ public class Model {
         this.registeredSubjects = registeredSubjects;
         this.expectedNumberOfClass = expectedNumberOfClass;
         this.consecutiveSlotLimit = consecutiveSlotLimit;
+        this.quota = quota;
     }
-    public Model(Vector<Teacher> teachers, Vector<SlotGroup> slots, Vector<Subject> subjects, Vector<Class> classes,
-                 double[][] registeredSlots, double[][] registeredSubjects) {
-        this.teachers = teachers;
-        this.slots = slots;
-        this.subjects = subjects;
-        this.classes = classes;
-        this.registeredSlots = registeredSlots;
-        this.registeredSubjects = registeredSubjects;
-
-    }
+//    public Model(Vector<Teacher> teachers, Vector<SlotGroup> slots, Vector<Subject> subjects, Vector<Class> classes,
+//                 double[][] registeredSlots, double[][] registeredSubjects) {
+//        this.teachers = teachers;
+//        this.slots = slots;
+//        this.subjects = subjects;
+//        this.classes = classes;
+//        this.registeredSlots = registeredSlots;
+//        this.registeredSubjects = registeredSubjects;
+//
+//    }
 
     public static void main(String[] args) {
         Vector<Teacher> teachers = new Vector<>();

@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.lang.ref.Cleaner;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -36,7 +37,6 @@ public class DataReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return teachers;
 
     }
@@ -320,11 +320,23 @@ public class DataReader {
 
                 }
             }
+            Random random = new Random(1);
+            int [] quota = new int[teachers.size()];
+            for(int i =0 ; i < teachers.size(); i++) {
+                int cnt = 0;
+                for(int j =0 ; j <10; j++) {
+                    if (registeredSlots[i][j] > 0) cnt++;
+                }
+                if (teachers.get(i).getType() == Teacher.FULL_TIME) {
+                    quota[i] = random.nextInt(3) + 5;
+                } else quota[i] = random.nextInt(1) + 1;
+                quota[i] = Math.min(quota[i], cnt);
+            }
 //            for(Class c:classes) {
 //                System.out.println(c.getRoom().getBuilding());
 //            }
 //            Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects);
-            Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, expectedNumberOfClass, consecutiveSlotLimit);
+            Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, expectedNumberOfClass, consecutiveSlotLimit, quota);
             return model;
         } catch (Exception e) {
             System.out.println(e.getMessage());

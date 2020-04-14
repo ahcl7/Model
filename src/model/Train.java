@@ -21,9 +21,9 @@ public class Train {
         this.visualize = new Visualize("GA visualization", "Without Minimizing standard deviation");
     }
 
-    public void notify(Chromosome c, double bestFitness, double avgFitness, double standardDeviation) {
+    public void notify(Chromosome c, double bestFitness, double avgFitness, int violation) {
         scheduleFrame.addSchedule(c);
-        this.visualize.add(bestFitness, avgFitness, standardDeviation);
+        this.visualize.add(bestFitness, avgFitness, violation);
     }
 
     public static void main(String[] args) {

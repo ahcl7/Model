@@ -116,6 +116,6 @@ public class DataGenerator {
             else expectedNumberOfClass[i] = random.nextInt(3) + 1;
         }
 
-        return new Model(teachers, slots, subjects, classes, registerdSlot, registerdSubject, expectedNumberOfClass, consecutiveSlotLimit);
+        return new Model(teachers, slots, subjects, classes, registerdSlot, registerdSubject, expectedNumberOfClass, consecutiveSlotLimit, new int[teachers.size()]);
     };
 }
