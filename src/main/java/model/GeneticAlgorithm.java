@@ -9,9 +9,9 @@ import java.util.Random;
 import java.util.Vector;
 
         public class GeneticAlgorithm {
-            public static final int POPULATION_SIZE = 100;
-            public static final double MUTATION_RATE = 0.25;
-            public static final int TOURNAMENT_SIZE = 3;
+//            public static final int POPULATION_SIZE = 100;
+//            public static final double MUTATION_RATE = 0.25;
+//            public static final int TOURNAMENT_SIZE = 3;
             public static final int CLASS_NUMBER = 5;
             public static final double IN_CLASS_RATE = 0.9;
 //        public static final double
@@ -24,7 +24,7 @@ import java.util.Vector;
             this.generation = 0;
             this.model = model;
             this.train = train;
-            this.population = new Population(POPULATION_SIZE, model);
+            this.population = new Population(this.model.getGaParameter().getPopulationSize(), model);
         }
         public void updateFitness() {
             this.population.updateFitness();
@@ -37,20 +37,21 @@ import java.util.Vector;
             System.out.println("Fitness Average: " + this.population.getAverageFitness());
             System.out.println("Best fitness: "  + this.population.getBestIndividuals().getFitness());
             System.out.println("Generation: " + this.generation);
-            this.train.notify(this.population.getBestIndividuals(), this.population.getBestIndividuals().calculateObjectiveFunction(), this.population.getAverageFitness(),
-                    this.population.getBestIndividuals().getNumberOfViolation());
+            Chromosome best = this.population.getBestIndividuals();
+            this.train.notify(best, this.generation, best.getFitness(), this.population.getAverageFitness(),
+                    best.getNumberOfViolation(), best.calculateObjectiveFunction());
             this.population.getBestIndividuals().display();
-            if (this.generation % 100 == 0) {
-                DataWriter.writeToCsv(this.model, this.population.getBestIndividuals(), "result" + this.generation / 100 + ".csv");
-            }
+//            if (this.generation % 100 == 0) {
+//                DataWriter.writeToCsv(this.model, this.population.getBestIndividuals(), "result" + this.generation / 100 + ".csv");
+//            }
         }
 
 
     public Chromosome selectParent() {
         Random random = new Random();
         Vector<Chromosome> candidates = new Vector<>();
-        for(int i = 0; i < TOURNAMENT_SIZE; i++) {
-            int idx = random.nextInt(POPULATION_SIZE);
+        for(int i = 0; i < this.model.getGaParameter().getTournamentSize(); i++) {
+            int idx = random.nextInt(this.model.getGaParameter().getPopulationSize());
             candidates.add(this.population.getIndividuals().get(idx));
         }
 
@@ -67,14 +68,14 @@ import java.util.Vector;
 
     public Chromosome selectParentRandomly() {
         Random random = new Random();
-        int idx = random.nextInt(POPULATION_SIZE);
+        int idx = random.nextInt(this.model.getGaParameter().getPopulationSize());
         return this.population.getIndividuals().get(idx);
     }
 
     public Chromosome selectParent(Vector<Chromosome> individuals) {
         Random random = new Random();
         Vector<Chromosome> candidates = new Vector<>();
-        for(int i = 0; i < TOURNAMENT_SIZE; i++) {
+        for(int i = 0; i < this.model.getGaParameter().getTournamentSize(); i++) {
             int idx = random.nextInt(individuals.size());
             candidates.add(individuals.get(idx));
         }
@@ -92,7 +93,7 @@ import java.util.Vector;
 
     public void selection1() {
         Population population1 = new Population(this.model);
-        for(int i = 0 ; i < this.POPULATION_SIZE / 2 ; i++) {
+        for(int i = 0 ; i < this.model.getGaParameter().getPopulationSize() / 2 ; i++) {
             Chromosome p1 = selectParent();
             Chromosome p2 = selectParent();
             Chromosome c1 = this.crossover(p1, p2);
@@ -113,8 +114,8 @@ import java.util.Vector;
         }
 
 
-        int classSize = POPULATION_SIZE / CLASS_NUMBER + ((POPULATION_SIZE % CLASS_NUMBER == 0) ? 0 : 1);
-        for(int i = 0 ; i < POPULATION_SIZE; i++) {
+        int classSize = this.model.getGaParameter().getPopulationSize() / CLASS_NUMBER + ((this.model.getGaParameter().getPopulationSize() % CLASS_NUMBER == 0) ? 0 : 1);
+        for(int i = 0 ; i < this.model.getGaParameter().getPopulationSize(); i++) {
             int classId = i / classSize;
             individualsByClass.get(classId).add(this.population.getIndividuals().get(i));
         }
@@ -124,7 +125,7 @@ import java.util.Vector;
         }
 
 
-        int inClassPairNumber = (int) (POPULATION_SIZE * IN_CLASS_RATE /  CLASS_NUMBER / 2);
+        int inClassPairNumber = (int) (this.model.getGaParameter().getPopulationSize() * IN_CLASS_RATE /  CLASS_NUMBER / 2);
         for(int i = 0; i < CLASS_NUMBER; i++) {
             for(int j = 0 ; j < inClassPairNumber; j++) {
                 Chromosome p1 = selectParent(individualsByClass.get(i));
@@ -138,7 +139,7 @@ import java.util.Vector;
 
 
 
-        while (population1.getSize() < POPULATION_SIZE) {
+        while (population1.getSize() < this.model.getGaParameter().getPopulationSize()) {
             Chromosome p1 = selectParentRandomly();
             Chromosome p2 = selectParentRandomly();
             Chromosome c1 = this.crossover(p1, p2);
@@ -164,9 +165,9 @@ import java.util.Vector;
         }
         public void mutate() {
         Random random = new Random();
-        for(int i = 0; i < POPULATION_SIZE; i++) {
+        for(int i = 0; i < this.model.getGaParameter().getPopulationSize(); i++) {
             for(int j = 0;  j < 1; j++) {
-                if (random.nextDouble() < MUTATION_RATE) {
+                if (random.nextDouble() < this.model.getGaParameter().getMutationRate()) {
                     this.population.getIndividuals().get(i).mutate();
                 }
             }

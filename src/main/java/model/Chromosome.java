@@ -223,7 +223,7 @@ public class Chromosome {
         //o5: minimize so giang vien day 1 lop qua 2 mon
         //o6: minimize so giang vien day qua gioi han
 
-
+        if (teachers.size() == 0) return 1.0;
         double p[] = new double[teachers.size()];
 
         double total = 0;
@@ -331,8 +331,12 @@ public class Chromosome {
             int teacherId = teacher.getId();
             int cnt = 0;
             for (int j = 0; j < 10; j++) {
-                if (this.genes.get(j).get(teacherId) != -1) {
+                int classId = this.genes.get(j).get(teacherId);
+                if (classId != -1) {
                     cnt++;
+                    if (this.model.getRegisteredSlots()[teacherId][j] == 0) rs ++;
+                    int subjectId = this.model.getClasses().get(classId).getSubjectId();
+                    if (this.model.getRegisteredSubjects()[teacherId][subjectId] == 0) rs ++;
                 }
             }
             if (cnt < this.model.getTeachers().get(teacherId).getQuota()) rs++;
@@ -474,15 +478,15 @@ public class Chromosome {
         this.needTobeUpdated = true;
 
         int m = model.getTeachers().size();
-        int n = model.getClasses().size();
+            int n = model.getClasses().size();
 
-        Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
+            Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
 
-        Vector<Vector<Integer>> genes = new Vector<>();
-        for (int i = 0; i < slots.size(); i++) {
-            Vector<Integer> classes = getClassBySlot(model.getClasses(), slots.get(i).getId());
-            while (classes.size() < m) classes.add(-1);
-            Collections.shuffle(classes);
+            Vector<Vector<Integer>> genes = new Vector<>();
+            for (int i = 0; i < slots.size(); i++) {
+                Vector<Integer> classes = getClassBySlot(model.getClasses(), slots.get(i).getId());
+                while (classes.size() < m) classes.add(-1);
+                Collections.shuffle(classes);
 //            System.out.println(classes);
             genes.add(classes);
         }
@@ -535,6 +539,7 @@ public class Chromosome {
         }
     }
     public void autoRepair() {
+        if (true) return;
         Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
         for (int i = 0; i < slots.size(); i++) {
             Vector<Integer> col = this.genes.get(i);

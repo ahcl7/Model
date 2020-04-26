@@ -1,8 +1,8 @@
 package model;
 
-import data.DataReader;
-import data.Schedule;
-import data.Visualize;
+import data.*;
+
+import java.util.Vector;
 
 public class Train {
     public static final int M = 5; //teacher size
@@ -11,15 +11,21 @@ public class Train {
 
     public Schedule scheduleFrame;
     public Visualize visualize;
+    Vector<OutputRecord> data;
 
     public Train() {
         this.scheduleFrame = new Schedule();
         this.visualize = new Visualize("GA visualization", "Without Minimizing standard deviation");
+        data = new Vector<>();
     }
 
-    public void notify(Chromosome c, double bestFitness, double avgFitness, int violation) {
+    public void notify(Chromosome c, int genId, double bestFitness, double avgFitness, int violation, double objectiveValue) {
         scheduleFrame.addSchedule(c);
         this.visualize.add(bestFitness, avgFitness, violation);
+        data.add(new OutputRecord(genId, bestFitness, objectiveValue, violation, avgFitness));
+        if (genId % 50 == 0) {
+            DataWriter.writeToCsv(data, "out9.csv");
+        }
     }
 
     public static void main(String[] args) {

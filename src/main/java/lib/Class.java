@@ -14,6 +14,7 @@ public class Class {
 
     @Override
     public String toString() {
-        return "(" + studentGroup + " | " + subjectId + " | " + room.getName() + ")";
+//        return "(" + studentGroup + " | " + subjectId + " | " + room.getName() + ")";
+        return this.id + 1 + "";
     }
 }

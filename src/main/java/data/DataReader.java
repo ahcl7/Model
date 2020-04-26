@@ -202,10 +202,27 @@ public class DataReader {
 //        teachers.add(new Teacher("E2", "E1", 1));
 //        teachers.add(new Teacher("E3", "E1", 2));
 //        teachers.add(new Teacher("E4", "E1", 3));
-        String registerSlotPath = "src\\main\\java\\data\\teacher_slot_real.xml";
-        String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_real.xml";
-        String classPath = "src\\main\\java\\data\\class_real.xml";
-
+        String test_case = "real";
+        String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
+        String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
+        String classPath = "src\\main\\java\\data\\class_" + test_case + ".xml";
+        GaParameter gaParameter = new GaParameter();
+        gaParameter.setMutationRate(1.0);
+        gaParameter.setPopulationSize(100);
+        gaParameter.setTournamentSize(3);
+        gaParameter.setConvergenceCheckRange(70);
+        Cofficient coff = new Cofficient();
+        coff.setFulltimeCoff(0.5);
+        coff.setParttimeCoff(0.5);
+        coff.setHardConstraintCoff(0.9);
+        coff.setSoftConstraintCoff(0.1);
+        coff.setSlotCoff(0.35);
+        coff.setSubjectCoff(0.35);
+        coff.setNumberOfClassCoff(0.3);
+        coff.setDistanceCoff(0.00);
+        coff.setConsicutiveClassCoff(0.00);
+        coff.setSatisfactionSumCoff(1.0);
+        coff.setStdCoff(0.0);
         try {
             File f = new File(registerSlotPath);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -238,7 +255,7 @@ public class DataReader {
                     expectedNumberOfClass[i - 1] = ec;
                     int ccl = Integer.parseInt(e.getElementsByTagName("Cell").item(12).getTextContent());
                     consecutiveSlotLimit[i - 1] = ccl;
-                    int qt = Integer.parseInt(e.getElementsByTagName("Cell").item(13).getTextContent());
+                    int qt = Integer.parseInt(e.getElementsByTagName("Cell").item(14).getTextContent());
                     quota[i-1] = qt;
                 }
             }
@@ -323,23 +340,6 @@ public class DataReader {
                 teachers.get(i).setConsecutiveSlotLimit(consecutiveSlotLimit[i]);
                 teachers.get(i).setQuota(quota[i]);
             }
-            GaParameter gaParameter = new GaParameter();
-            gaParameter.setMutationRate(0.25);
-            gaParameter.setPopulationSize(150);
-            gaParameter.setTournamentSize(3);
-            gaParameter.setConvergenceCheckRange(70);
-            Cofficient coff = new Cofficient();
-            coff.setFulltimeCoff(0.5);
-            coff.setParttimeCoff(0.5);
-            coff.setHardConstraintCoff(0.7);
-            coff.setSoftConstraintCoff(0.3);
-            coff.setSlotCoff(0.15);
-            coff.setSubjectCoff(0.15);
-            coff.setNumberOfClassCoff(0.6);
-            coff.setDistanceCoff(0.07);
-            coff.setConsicutiveClassCoff(0.03);
-            coff.setSatisfactionSumCoff(0.7);
-            coff.setStdCoff(0.3);
 
             gaParameter.setCofficient(coff);
             Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, gaParameter);
