@@ -358,7 +358,7 @@ public class Chromosome {
 
         double fulltimeCoff = this.model.getGaParameter().getCofficient().getFulltimeCoff();
         double parttimeCoff = this.model.getGaParameter().getCofficient().getParttimeCoff();
-        this.fitness = fulltimeCoff * this.calculateFitnessForSubGroup1(fullTimeTeachers) + parttimeCoff * this.calculateFitnessForSubGroup1(partTimeTeachers);
+        this.fitness = fulltimeCoff * this.calculateFitnessForSubGroup(fullTimeTeachers) + parttimeCoff * this.calculateFitnessForSubGroup(partTimeTeachers);
         double hardConstrainCoff = this.model.getGaParameter().getCofficient().getHardConstraintCoff();
         double softConstrainCoff = this.model.getGaParameter().getCofficient().getSoftConstraintCoff();
         this.fitness = hardConstrainCoff * (1.0 / (1.0 + this.getNumberOfViolation())) + softConstrainCoff * this.fitness;

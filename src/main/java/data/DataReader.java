@@ -196,23 +196,23 @@ public class DataReader {
         return res;
     }
 
-    public static Model getData() {
-        Vector<Teacher> teachers = new Vector<>();
+        public static Model getData() {
+            Vector<Teacher> teachers = new Vector<>();
 //        teachers.add(new Teacher("E1", "E1", 0));
 //        teachers.add(new Teacher("E2", "E1", 1));
 //        teachers.add(new Teacher("E3", "E1", 2));
 //        teachers.add(new Teacher("E4", "E1", 3));
-        String test_case = "real";
-        String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
-        String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
-        String classPath = "src\\main\\java\\data\\class_" + test_case + ".xml";
-        GaParameter gaParameter = new GaParameter();
-        gaParameter.setMutationRate(1.0);
-        gaParameter.setPopulationSize(100);
-        gaParameter.setTournamentSize(3);
-        gaParameter.setConvergenceCheckRange(70);
-        Cofficient coff = new Cofficient();
-        coff.setFulltimeCoff(0.5);
+            String test_case = "real";
+            String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
+            String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
+            String classPath = "src\\main\\java\\data\\class_" + test_case + ".xml";
+            GaParameter gaParameter = new GaParameter();
+            gaParameter.setMutationRate(1.0);
+            gaParameter.setPopulationSize(100);
+            gaParameter.setTournamentSize(3);
+            gaParameter.setConvergenceCheckRange(70);
+            Cofficient coff = new Cofficient();
+            coff.setFulltimeCoff(0.5);
         coff.setParttimeCoff(0.5);
         coff.setHardConstraintCoff(0.7);
         coff.setSoftConstraintCoff(0.3);
