@@ -539,7 +539,7 @@ public class Chromosome {
         }
     }
     public void autoRepair() {
-        if (true) return;
+//        if (true) return;
         Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
         for (int i = 0; i < slots.size(); i++) {
             Vector<Integer> col = this.genes.get(i);

@@ -21,10 +21,10 @@ public class Train {
 
     public void notify(Chromosome c, int genId, double bestFitness, double avgFitness, int violation, double objectiveValue) {
         scheduleFrame.addSchedule(c);
-        this.visualize.add(bestFitness, avgFitness, violation);
+        this.visualize.add(objectiveValue, avgFitness, violation);
         data.add(new OutputRecord(genId, bestFitness, objectiveValue, violation, avgFitness));
         if (genId % 50 == 0) {
-            DataWriter.writeToCsv(data, "out9.csv");
+            DataWriter.writeToCsv(data, "out_1_3.csv");
         }
     }
 

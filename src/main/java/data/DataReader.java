@@ -214,8 +214,8 @@ public class DataReader {
         Cofficient coff = new Cofficient();
         coff.setFulltimeCoff(0.5);
         coff.setParttimeCoff(0.5);
-        coff.setHardConstraintCoff(0.9);
-        coff.setSoftConstraintCoff(0.1);
+        coff.setHardConstraintCoff(0.7);
+        coff.setSoftConstraintCoff(0.3);
         coff.setSlotCoff(0.35);
         coff.setSubjectCoff(0.35);
         coff.setNumberOfClassCoff(0.3);
