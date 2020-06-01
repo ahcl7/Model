@@ -1,4 +1,5 @@
 package model;
+
 import lib.*;
 import lib.Class;
 import lombok.Data;
@@ -71,6 +72,59 @@ public class Chromosome {
                 + W[1] / (1.0 + 1.0 * S2 / this.model.getTeachers().size());
         System.out.println(S1 + " " + S2);
         this.needTobeUpdated = false;
+    }
+
+    public int getNumberOfSessionPerWeek(int teacherId) {
+        int numberOfSessionsPerWeek = 0;
+        int group[] = new int[10];
+
+        boolean mark[] = new boolean[4];
+
+        for (SlotGroup sg : this.model.getSlots()) {
+            for (Slot slot : sg.getSlots()) {
+                group[slot.getId()] = sg.getId();
+            }
+        }
+        for (int i = 0; i < 10; i++) {
+            int classId = this.getGenes().get(i).get(teacherId);
+            if (classId != -1) {
+                mark[group[this.model.getClasses().get(classId).getSlotId()]] = true;
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (mark[i]) numberOfSessionsPerWeek++;
+        }
+        return numberOfSessionsPerWeek;
+    }
+
+    double getPod(int teacherId) {
+        int cnt = 0;
+        for (int i = 0; i < 10; i++) {
+            int classId = this.getGenes().get(i).get(teacherId);
+            if (classId != -1) {
+                cnt ++;
+            }
+        }
+        double pod = 0;
+
+        int numberOfSessionsPerWeek = getNumberOfSessionPerWeek(teacherId);
+        if (cnt <= 3) {
+            if (numberOfSessionsPerWeek == 1) pod = 100;
+            else if (numberOfSessionsPerWeek == 2) pod = 20;
+            else pod = 0;
+        } else if (cnt <= 6) {
+            if (numberOfSessionsPerWeek == 2) pod = 100;
+            else if (numberOfSessionsPerWeek == 3) pod = 20;
+            else pod = 0;
+        } else if (cnt <= 8) {
+            if (numberOfSessionsPerWeek == 3) pod = 100;
+            else if (numberOfSessionsPerWeek == 4) pod = 20;
+            else pod = 0;
+        } else {
+            pod = 100;
+        }
+        return pod;
     }
 
     public double calculateSatisfaction(int teacherId) {
@@ -195,15 +249,24 @@ public class Chromosome {
         else consecutiveSlot = 0;
         if (consecutiveSlot > lim) overLimit++;
 
+        /// calculate satisfaction with number of parts of day in a week
+
+        int numberOfSessionsPerWeek = getNumberOfSessionPerWeek(teacherId);
+
+        double pod = getPod(teacherId);
+
+
         double slotCoff = this.model.getGaParameter().getCofficient().getSlotCoff();
         double subjectCoff = this.model.getGaParameter().getCofficient().getSubjectCoff();
         double numberOfClassCoff = this.model.getGaParameter().getCofficient().getNumberOfClassCoff();
         double distanceCoff = this.model.getGaParameter().getCofficient().getDistanceCoff();
         double consecutiveClassCoff = this.model.getGaParameter().getCofficient().getConsicutiveClassCoff();
+        double numberOfSessionCoff = this.model.getGaParameter().getCofficient().getNumberOfSessionCoff();
         double F = slotCoff * (maxSlotSatisfaction == 0 ? 0 : 1.0 * slotSatisfaction / maxSlotSatisfaction) +
                 subjectCoff * (maxSubjectSatisfaction == 0 ? 0 : 1.0 * subjectSatisfaction / maxSubjectSatisfaction) +
                 numberOfClassCoff * 1.0 / (Math.pow(2.0, Math.abs(cnt - this.model.getTeachers().get(teacherId).getExpectedNumberOfClass()))) +
                 distanceCoff * 1.0 / (1.0 + 9.0 * distance / 105.0) +
+                numberOfSessionCoff * pod / 100 +
                 consecutiveClassCoff * 1.0 / (1.0 + o5);
         return F;
 
@@ -295,6 +358,7 @@ public class Chromosome {
                 row.add(Real.valueOf(expectedThisSlot * this.model.getRegisteredSlots()[teacherId][slotId]));
             }
             row.add(Real.valueOf(Math.pow(this.model.getTeachers().get(teacherId).getExpectedNumberOfClass(), 2)));
+            row.add(Real.valueOf(100));
 
             expectedMatrix.add(DenseVector.valueOf(row));
         }
@@ -317,6 +381,7 @@ public class Chromosome {
                 }
             }
             row.add(Real.valueOf(numberOfClassAssigned * numberOfClassAssigned));
+            row.add(Real.valueOf(this.getPod(teacherId)));
             factMatrix.add(DenseVector.valueOf(row));
         }
 
@@ -334,9 +399,9 @@ public class Chromosome {
                 int classId = this.genes.get(j).get(teacherId);
                 if (classId != -1) {
                     cnt++;
-                    if (this.model.getRegisteredSlots()[teacherId][j] == 0) rs ++;
+                    if (this.model.getRegisteredSlots()[teacherId][j] == 0) rs++;
                     int subjectId = this.model.getClasses().get(classId).getSubjectId();
-                    if (this.model.getRegisteredSubjects()[teacherId][subjectId] == 0) rs ++;
+                    if (this.model.getRegisteredSubjects()[teacherId][subjectId] == 0) rs++;
                 }
             }
             if (cnt < this.model.getTeachers().get(teacherId).getQuota()) rs++;
@@ -430,7 +495,7 @@ public class Chromosome {
     Vector<Integer> getClassBySlot(Vector<Class> classes, int slotId) {
         Vector<Integer> res = new Vector<>();
         for (Class c : classes) {
-            if (c.getSlotId() == slotId) {
+            if (c.getSlotId() == slotId && c.getStatus() == Class.OK) {
                 res.add(c.getId());
             }
         }
@@ -478,15 +543,15 @@ public class Chromosome {
         this.needTobeUpdated = true;
 
         int m = model.getTeachers().size();
-            int n = model.getClasses().size();
+        int n = model.getClasses().size();
 
-            Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
+        Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());
 
-            Vector<Vector<Integer>> genes = new Vector<>();
-            for (int i = 0; i < slots.size(); i++) {
-                Vector<Integer> classes = getClassBySlot(model.getClasses(), slots.get(i).getId());
-                while (classes.size() < m) classes.add(-1);
-                Collections.shuffle(classes);
+        Vector<Vector<Integer>> genes = new Vector<>();
+        for (int i = 0; i < slots.size(); i++) {
+            Vector<Integer> classes = getClassBySlot(model.getClasses(), slots.get(i).getId());
+            while (classes.size() < m) classes.add(-1);
+            Collections.shuffle(classes);
 //            System.out.println(classes);
             genes.add(classes);
         }
@@ -538,6 +603,7 @@ public class Chromosome {
             this.genes.get(j % 10).set(j / 10, matching[j + 1] - 1);
         }
     }
+
     public void autoRepair() {
 //        if (true) return;
         Vector<Slot> slots = SlotGroup.getSlotList(this.model.getSlots());

@@ -1,6 +1,7 @@
 package model;
 
 
+import com.fpt.edu.schedule.ai.model.ResourceChecker;
 import lib.*;
 import lib.Class;
 import lombok.Data;
@@ -55,6 +56,8 @@ public class Model {
             this.registeredSubjects[teacherId][subjectId] = es.getLevelOfPreference();
         }
 
+        checkResource();
+
 //        for(int i=0 ;i < teachers.size();i ++) {
 //            System.out.print(this.teachers.get(i).getEmail() + " ");
 //            for(int j =0 ; j < 10;j ++) {
@@ -64,6 +67,17 @@ public class Model {
 //        }
 
 //
+    }
+
+    public void checkResource() {
+        ResourceChecker resourceChecker = new ResourceChecker(this);
+        Vector<Class> possibleClasses = resourceChecker.getMaximumClass();
+        for (Class _class : this.getClasses()) {
+            _class.setStatus(Class.NOT_OK);
+        }
+        for (Class _class : possibleClasses) {
+            this.getClasses().get(_class.getId()).setStatus(Class.OK);
+        }
     }
 
     Map<Integer, Integer> teacherIdMapping;
@@ -150,54 +164,5 @@ public class Model {
 
 
     public Model() {
-    }
-
-    public static void main(String[] args) {
-        Vector<Teacher> teachers = new Vector<>();
-        teachers.add(new Teacher("asdf", "asdf", 3, Teacher.FULL_TIME));
-        teachers.add(new Teacher("asdf", "asdf", 5, Teacher.FULL_TIME));
-
-        Vector<SlotGroup> slots = new Vector<>();
-        SlotGroup m246 = new SlotGroup(3);
-        m246.addSlot(new Slot("M1", 0));
-        m246.addSlot(new Slot("M2", 1));
-        m246.addSlot(new Slot("M3", 2));
-        SlotGroup e246 = new SlotGroup(3);
-
-        e246.addSlot(new Slot("E1", 3));
-        e246.addSlot(new Slot("E2", 4));
-        e246.addSlot(new Slot("E3", 5));
-
-        SlotGroup m35 = new SlotGroup(1);
-
-        m35.addSlot(new Slot("M4", 6));
-        m35.addSlot(new Slot("M5", 7));
-
-        SlotGroup e35 = new SlotGroup(1);
-
-        e35.addSlot(new Slot("E4", 8));
-        e35.addSlot(new Slot("E5", 9));
-        slots.add(m246);
-        slots.add(e246);
-        slots.add(m35);
-        slots.add(e35);
-
-        Vector<Slot> slotList = SlotGroup.getSlotList(slots);
-        Vector<ExpectedSlot> registerSlot = new Vector<>();
-        registerSlot.add(new ExpectedSlot(3, 1, 5));
-        registerSlot.add(new ExpectedSlot(5, 2, 3));
-        Vector<Subject> subjects = new Vector<>();
-        subjects.add(new Subject("asdf", 7));
-        subjects.add(new Subject("asdf", 10));
-        Vector<ExpectedSubject> registerSubject = new Vector<>();
-        registerSubject.add(new ExpectedSubject(3, 7, 5));
-        registerSubject.add(new ExpectedSubject(5, 10, 2));
-        Vector<Class> classes = new Vector<>();
-
-        classes.add(new Class("s1", 1, 7, new Room("asdf"), 0));
-        classes.add(new Class("s1", 2, 10, new Room("asdf"), 1));
-        classes.add(new Class("s1", 1, 7, new Room("asdf"), 2));
-        GaParameter gaParameter = new GaParameter();
-        Model model = new Model(teachers, slots, subjects, classes, registerSlot, registerSubject, gaParameter);
     }
 }

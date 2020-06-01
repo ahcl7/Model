@@ -80,6 +80,7 @@ public class Schedule extends JFrame {
         headers.add("E4");
         headers.add("E5");
         headers.add("expected number of class");
+        headers.add("number of sessions");
         headers.add("satisfaction");
         Vector<Vector<String>> data = new Vector<>();
         Vector<String> row;
@@ -94,6 +95,7 @@ public class Schedule extends JFrame {
                 } else row.add("");
             }
             row.add(c.getModel().getTeachers().get(i).getExpectedNumberOfClass()+ "");
+            row.add(c.getNumberOfSessionPerWeek(i) + "");
             row.add(c.calculateSatisfaction(i) + "");
             data.add(row);
         }

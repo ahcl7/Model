@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Dinic {
     public static final int INF = (int) 1e9;
-    int n, s, t, flow[][], cap[][], lv[];
+    public int n, s, t, flow[][], cap[][], lv[];
     int matx[];
 
     public void reset() {
@@ -133,7 +133,7 @@ public class Dinic {
     }
 
 
-    int maxflow() {
+    public int maxflow() {
         this.reset();
         int flow = 0;
         while (bfs()) {

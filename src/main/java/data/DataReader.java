@@ -1,4 +1,5 @@
 package data;
+
 import lib.*;
 import lib.Class;
 import model.Cofficient;
@@ -170,55 +171,30 @@ public class DataReader {
         return room.split("-")[0];
     }
 
-    public static Vector<Class> getClasses(Vector<Slot> slots, Vector<Subject> subjects, String filename) {
-        Vector<Class> res = new Vector<>();
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-            String str = "";
-            int id = 0;
-            br.readLine();
-            while ((str = br.readLine()) != null && str.length() != 0) {
-                String datas[] = str.split(",");
-                String className = datas[0];
-                String subjectName = datas[1];
-                String slotName = datas[2];
-                String room = datas[4];
-                int subjectId = getSubjectIdByName(subjects, subjectName);
-                if (subjectId != -1) {
-                    res.add(new Class(className, getSlotByName(slots, slotName).getId(), getSubjectByName(subjects, subjectName).getId(), new Room(room, 0, getBuilding(room)), id++));
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-        public static Model getData() {
-            Vector<Teacher> teachers = new Vector<>();
+    public static Model getData() {
+        Vector<Teacher> teachers = new Vector<>();
 //        teachers.add(new Teacher("E1", "E1", 0));
 //        teachers.add(new Teacher("E2", "E1", 1));
 //        teachers.add(new Teacher("E3", "E1", 2));
 //        teachers.add(new Teacher("E4", "E1", 3));
-            String test_case = "real";
-            String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
-            String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
-            String classPath = "src\\main\\java\\data\\class_" + test_case + ".xml";
-            GaParameter gaParameter = new GaParameter();
-            gaParameter.setMutationRate(1.0);
-            gaParameter.setPopulationSize(100);
-            gaParameter.setTournamentSize(3);
-            gaParameter.setConvergenceCheckRange(70);
-            Cofficient coff = new Cofficient();
-            coff.setFulltimeCoff(0.5);
+        String test_case = "real_summer";
+        String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
+        String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
+        String classPath = "src\\main\\java\\data\\class_" + test_case + ".xml";
+        GaParameter gaParameter = new GaParameter();
+        gaParameter.setMutationRate(1.0);
+        gaParameter.setPopulationSize(100);
+        gaParameter.setTournamentSize(3);
+        gaParameter.setConvergenceCheckRange(70);
+        Cofficient coff = new Cofficient();
+        coff.setFulltimeCoff(0.5);
         coff.setParttimeCoff(0.5);
         coff.setHardConstraintCoff(0.7);
         coff.setSoftConstraintCoff(0.3);
-        coff.setSlotCoff(0.35);
-        coff.setSubjectCoff(0.35);
+        coff.setSlotCoff(0.25);
+        coff.setSubjectCoff(0.25);
         coff.setNumberOfClassCoff(0.3);
+        coff.setNumberOfSessionCoff(0.2);
         coff.setDistanceCoff(0.00);
         coff.setConsicutiveClassCoff(0.00);
         coff.setSatisfactionSumCoff(1.0);
@@ -238,7 +214,6 @@ public class DataReader {
             Integer[] consecutiveSlotLimit = new Integer[teacherList.getLength() - 1];
             Integer[] quota = new Integer[teacherList.getLength() - 1];
 
-            System.out.println(teacherList.getLength());
             for (int i = 1; i < teacherList.getLength(); i++) {
 
                 Node node = teacherList.item(i);
@@ -256,12 +231,9 @@ public class DataReader {
                     int ccl = Integer.parseInt(e.getElementsByTagName("Cell").item(12).getTextContent());
                     consecutiveSlotLimit[i - 1] = ccl;
                     int qt = Integer.parseInt(e.getElementsByTagName("Cell").item(14).getTextContent());
-                    quota[i-1] = qt;
+                    quota[i - 1] = qt;
                 }
             }
-
-            System.out.println(teachers.size());
-
 
             doc = buider.parse(new File(registerSubjectPath));
             lst = doc.getDocumentElement();
@@ -275,7 +247,6 @@ public class DataReader {
                 subjects.add(new Subject(subjectName, i - 1));
             }
             Vector<ExpectedSubject> registeredSubjects = new Vector<>();
-
             for (int i = 1; i < teacherList.getLength(); i++) {
                 if (teacherList.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     Element e = (Element) teacherList.item(i);
@@ -285,25 +256,25 @@ public class DataReader {
                     }
                 }
             }
-
+            System.out.println(1);
 
             Vector<SlotGroup> slots = new Vector<>();
-            SlotGroup m246 = new SlotGroup(3);
+            SlotGroup m246 = new SlotGroup(3, 0);
             m246.addSlot(new Slot("M1", 0));
             m246.addSlot(new Slot("M2", 1));
             m246.addSlot(new Slot("M3", 2));
-            SlotGroup e246 = new SlotGroup(3);
+            SlotGroup e246 = new SlotGroup(3, 1);
 
             e246.addSlot(new Slot("E1", 3));
             e246.addSlot(new Slot("E2", 4));
             e246.addSlot(new Slot("E3", 5));
 
-            SlotGroup m35 = new SlotGroup(1);
+            SlotGroup m35 = new SlotGroup(1, 2);
 
             m35.addSlot(new Slot("M4", 6));
             m35.addSlot(new Slot("M5", 7));
 
-            SlotGroup e35 = new SlotGroup(1);
+            SlotGroup e35 = new SlotGroup(1, 3);
 
             e35.addSlot(new Slot("E4", 8));
             e35.addSlot(new Slot("E5", 9));
@@ -328,7 +299,7 @@ public class DataReader {
                     String roomName = e.getElementsByTagName("Cell").item(3).getTextContent();
 //                    System.out.println(studentGroup + " " + subjectName + " " + slotName + " " + roomName);
                     classes.add(new Class(studentGroup, getSlotByName(slotList, slotName).getId(), getSubjectByName(subjects, subjectName).getId(),
-                            new Room(roomName, 1, roomName.split("-")[0]), i - 1));
+                            new Room(roomName, 1, roomName.split("-")[0]), i - 1, 0));
 
                 }
             }
@@ -342,6 +313,7 @@ public class DataReader {
             }
 
             gaParameter.setCofficient(coff);
+
             Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, gaParameter);
             return model;
         } catch (Exception e) {

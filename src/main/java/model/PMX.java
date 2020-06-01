@@ -27,11 +27,11 @@ public class PMX {
             max = Math.max(max, p.get(i));
         }
 
-        Vector<Integer> newNumbers = new Vector<>();
-        for(int i = 0; i < sz; i++) {
-            if (p.get(i) == -1) {
-                newNumbers.add(++max);
-            }
+            Vector<Integer> newNumbers = new Vector<>();
+            for(int i = 0; i < sz; i++) {
+                if (p.get(i) == -1) {
+                    newNumbers.add(++max);
+                }
         }
 
         Collections.shuffle(newNumbers);

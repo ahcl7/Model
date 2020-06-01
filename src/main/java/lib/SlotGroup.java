@@ -7,15 +7,18 @@ import java.util.Vector;
 public class SlotGroup {
     private Vector<Slot> slots;
     private int coff;
+    private int id;
 
-    public SlotGroup(int coff) {
+    public SlotGroup(int coff, int id) {
         slots = new Vector<>();
         this.coff = coff;
+        this.id = id;
     }
 
-    public SlotGroup(Vector<Slot> slots, int coff) {
+    public SlotGroup(Vector<Slot> slots, int coff, int id) {
         this.slots = slots;
         this.coff = coff;
+        this.id = id;
     }
 
     public void addSlot(Slot slot) {
@@ -40,7 +43,7 @@ public class SlotGroup {
 
     public static Vector<Slot> getSlotList(Vector<SlotGroup> slots) {
         Vector<Slot> res = new Vector<Slot>();
-        for(SlotGroup slotGroup:slots) {
+        for (SlotGroup slotGroup : slots) {
             res.addAll(slotGroup.getSlots());
         }
 
@@ -54,5 +57,9 @@ public class SlotGroup {
             }
         });
         return res;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }
