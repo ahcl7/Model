@@ -10,4 +10,5 @@ public class GaParameter {
     private double tournamentSize;
     private Cofficient cofficient;
     private int convergenceCheckRange;
+    private int modelType;
 }

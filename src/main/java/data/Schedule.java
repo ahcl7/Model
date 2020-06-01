@@ -9,8 +9,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Vector;
 
 public class Schedule extends JFrame {
@@ -84,17 +82,17 @@ public class Schedule extends JFrame {
         headers.add("satisfaction");
         Vector<Vector<String>> data = new Vector<>();
         Vector<String> row;
-        for (int i = 0; i < c.getModel().getTeachers().size(); i++) {
+        for (int i = 0; i < c.getInputData().getTeachers().size(); i++) {
             row = new Vector<>();
-            row.add(c.getModel().getTeachers().get(i).getName());
+            row.add(c.getInputData().getTeachers().get(i).getName());
 
             for (int j = 0; j < c.getGenes().size(); j++) {
                 int classId = c.getGenes().get(j).get(i);
                 if (classId != -1) {
-                    row.add(c.getModel().getClasses().get(classId).toString());
+                    row.add(c.getInputData().getClasses().get(classId).toString());
                 } else row.add("");
             }
-            row.add(c.getModel().getTeachers().get(i).getExpectedNumberOfClass()+ "");
+            row.add(c.getInputData().getTeachers().get(i).getExpectedNumberOfClass()+ "");
             row.add(c.getNumberOfSessionPerWeek(i) + "");
             row.add(c.calculateSatisfaction(i) + "");
             data.add(row);

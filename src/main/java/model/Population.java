@@ -16,12 +16,12 @@ public class Population {
     private Vector<Chromosome> individuals;
     private int size;
 
-    private Model model;
+    private InputData inputData;
 
-    public Population(Model model) {
+    public Population(InputData inputData) {
         this.individuals = new Vector<>();
         this.size = 0;
-        this.model = model;
+        this.inputData = inputData;
     }
 
     public void addIndividual(Chromosome chromosome) {
@@ -30,7 +30,7 @@ public class Population {
     }
 
     public void addIndividual() {
-        this.individuals.add(new Chromosome(this.model));
+        this.individuals.add(new Chromosome(this.inputData));
         this.size ++;
     }
 
@@ -38,12 +38,12 @@ public class Population {
         return size;
     }
 
-    public Population(int size, Model model) {
+    public Population(int size, InputData inputData) {
         this.size = size;
-        this.model = model;
+        this.inputData = inputData;
         this.individuals = new Vector<>();
         for(int i = 0; i < size; i++) {
-            this.individuals.add(new Chromosome(model));
+            this.individuals.add(new Chromosome(inputData));
         }
     }
 

@@ -4,6 +4,7 @@ import lib.*;
 import lib.Class;
 import model.Cofficient;
 import model.GaParameter;
+import model.InputData;
 import model.Model;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,12 +172,8 @@ public class DataReader {
         return room.split("-")[0];
     }
 
-    public static Model getData() {
+    public static InputData getData() {
         Vector<Teacher> teachers = new Vector<>();
-//        teachers.add(new Teacher("E1", "E1", 0));
-//        teachers.add(new Teacher("E2", "E1", 1));
-//        teachers.add(new Teacher("E3", "E1", 2));
-//        teachers.add(new Teacher("E4", "E1", 3));
         String test_case = "real_summer";
         String registerSlotPath = "src\\main\\java\\data\\teacher_slot_" + test_case + ".xml";
         String registerSubjectPath = "src\\main\\java\\data\\teacher_subject_" + test_case + ".xml";
@@ -186,6 +183,7 @@ public class DataReader {
         gaParameter.setPopulationSize(100);
         gaParameter.setTournamentSize(3);
         gaParameter.setConvergenceCheckRange(70);
+        gaParameter.setModelType(Model.LINER_SCALARIZATION);
         Cofficient coff = new Cofficient();
         coff.setFulltimeCoff(0.5);
         coff.setParttimeCoff(0.5);
@@ -297,25 +295,18 @@ public class DataReader {
                     String subjectName = e.getElementsByTagName("Cell").item(1).getTextContent();
                     String slotName = e.getElementsByTagName("Cell").item(2).getTextContent();
                     String roomName = e.getElementsByTagName("Cell").item(3).getTextContent();
-//                    System.out.println(studentGroup + " " + subjectName + " " + slotName + " " + roomName);
                     classes.add(new Class(studentGroup, getSlotByName(slotList, slotName).getId(), getSubjectByName(subjects, subjectName).getId(),
                             new Room(roomName, 1, roomName.split("-")[0]), i - 1, 0));
-
                 }
             }
-            Random random = new Random(1);
-
-
             for (int i = 0; i < teachers.size(); i++) {
                 teachers.get(i).setExpectedNumberOfClass(expectedNumberOfClass[i]);
                 teachers.get(i).setConsecutiveSlotLimit(consecutiveSlotLimit[i]);
                 teachers.get(i).setQuota(quota[i]);
             }
-
             gaParameter.setCofficient(coff);
-
-            Model model = new Model(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, gaParameter);
-            return model;
+            InputData inputData = new InputData(teachers, slots, subjects, classes, registeredSlots, registeredSubjects, gaParameter);
+            return inputData;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;

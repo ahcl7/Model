@@ -33,16 +33,16 @@ public class Train {
 //        Model model = DataGenerator.Gendata(M, K, N);
 
         Train train = new Train();
-        Model model = DataReader.getData();
-        System.out.println(model.getTeachers().size());
-        System.out.println(model.getSubjects().size());
-        System.out.println(model.getClasses().size());
+        InputData inputData = DataReader.getData();
+        System.out.println(inputData.getTeachers().size());
+        System.out.println(inputData.getSubjects().size());
+        System.out.println(inputData.getClasses().size());
 
 //        for(Subject subject:model.getSubjects()) {
 //            System.out.println(subject.getName());
 //        }
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(model, train);
+        GeneticAlgorithm ga = new GeneticAlgorithm(inputData, train);
         ga.start();
     }
 }

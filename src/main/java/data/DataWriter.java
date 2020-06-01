@@ -1,10 +1,5 @@
 package data;
 
-import lib.Slot;
-import lib.SlotGroup;
-import model.Chromosome;
-import model.Model;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
