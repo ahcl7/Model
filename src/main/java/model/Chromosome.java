@@ -68,7 +68,7 @@ public class Chromosome {
             else pod = 0;
         } else if (cnt <= 8) {
             if (numberOfSessionsPerWeek == 3) pod = 100;
-            else if (numberOfSessionsPerWeek == 4) pod = 20;
+            else if (numberOfSessionsPerWeek == 4) pod = 50;
             else pod = 0;
         } else {
             pod = 100;
